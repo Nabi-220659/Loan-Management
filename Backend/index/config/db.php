@@ -1,4 +1,5 @@
 <?php
+ini_set('pcre.jit', '0');
 /**
  * db.php — MongoDB Connection Configuration
  *

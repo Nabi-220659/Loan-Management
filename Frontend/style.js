@@ -1,7 +1,7 @@
 // ── HERO SLIDER ──
 const slides = document.querySelectorAll('.slide');
-const dots   = document.querySelectorAll('.dot');
-let current  = 0;
+const dots = document.querySelectorAll('.dot');
+let current = 0;
 let timer;
 
 function goTo(n) {
@@ -49,7 +49,7 @@ document.querySelectorAll('.reveal').forEach(el => observer.observe(el));
 // ══════════════════════════════════════════════
 async function fetchStats() {
   try {
-    const res  = await fetch('/Loan-Management-System/Backend/index/get_stats.php');
+    const res = await fetch('/Loan-Management-System/Backend/index/get_stats.php');
     const json = await res.json();
     if (!json.success) return;
 
@@ -57,7 +57,7 @@ async function fetchStats() {
       const item = document.querySelector(`[data-stat-key="${stat.key}"]`);
       if (!item) return;
       item.querySelector('.stat-number').textContent = stat.value;
-      item.querySelector('.stat-label').textContent  = stat.label;
+      item.querySelector('.stat-label').textContent = stat.label;
     });
   } catch (e) {
     // Silently fall back to hardcoded HTML values
@@ -72,7 +72,7 @@ async function fetchStats() {
 // ══════════════════════════════════════════════
 async function fetchProducts() {
   try {
-    const res  = await fetch('/Loan-Management-System/Backend/index/get_products.php');
+    const res = await fetch('/Loan-Management-System/Backend/index/get_products.php');
     const json = await res.json();
     if (!json.success || !json.data.length) return;
 
@@ -115,14 +115,14 @@ fetchProducts();
 // Opened by "Apply Now" and "Talk to Expert" buttons
 // POSTs to contact_inquiry.php
 // ══════════════════════════════════════════════
-const modal      = document.getElementById('contactModal');
+const modal = document.getElementById('contactModal');
 const modalOverlay = document.getElementById('modalOverlay');
 const modalTitle = document.getElementById('modalTitle');
-const modalType  = document.getElementById('modalType');
+const modalType = document.getElementById('modalType');
 
 function openModal(type) {
   if (!modal) return;
-  modalType.value        = type;
+  modalType.value = type;
   modalTitle.textContent = type === 'expert' ? '💬 Talk to an Expert' : '🚀 Apply Now';
   modal.classList.add('active');
   modalOverlay.classList.add('active');
@@ -176,22 +176,22 @@ contactForm?.addEventListener('submit', async e => {
   if (!validateContactForm()) return;
 
   const btn = contactForm.querySelector('.modal-submit-btn');
-  btn.disabled    = true;
+  btn.disabled = true;
   btn.textContent = 'Sending…';
 
   const payload = {
-    name   : document.getElementById('cName').value.trim(),
-    email  : document.getElementById('cEmail').value.trim(),
-    phone  : document.getElementById('cPhone').value.trim(),
+    name: document.getElementById('cName').value.trim(),
+    email: document.getElementById('cEmail').value.trim(),
+    phone: document.getElementById('cPhone').value.trim(),
     message: document.getElementById('cMessage').value.trim(),
-    type   : modalType.value
+    type: modalType.value
   };
 
   try {
-    const res  = await fetch('/Loan-Management-System/Backend/index/contact_inquiry.php', {
-      method : 'POST',
+    const res = await fetch('/Loan-Management-System/Backend/index/contact_inquiry.php', {
+      method: 'POST',
       headers: { 'Content-Type': 'application/json' },
-      body   : JSON.stringify(payload)
+      body: JSON.stringify(payload)
     });
     const json = await res.json();
 
@@ -205,7 +205,7 @@ contactForm?.addEventListener('submit', async e => {
   } catch (err) {
     showIndexToast('❌ Something went wrong. Please try again.', true);
   } finally {
-    btn.disabled    = false;
+    btn.disabled = false;
     btn.textContent = 'Submit';
   }
 });
@@ -216,7 +216,7 @@ function validateContactForm() {
   let valid = true;
   clearModalErrors();
 
-  const name  = document.getElementById('cName');
+  const name = document.getElementById('cName');
   const email = document.getElementById('cEmail');
   const phone = document.getElementById('cPhone');
 
@@ -252,8 +252,8 @@ function clearModalErrors() {
 function showIndexToast(msg, isError = false) {
   const t = document.getElementById('indexToast');
   if (!t) return;
-  t.textContent          = msg;
-  t.style.background     = isError ? '#ef4444' : '#10b981';
+  t.textContent = msg;
+  t.style.background = isError ? '#ef4444' : '#10b981';
   t.classList.add('show');
   setTimeout(() => t.classList.remove('show'), 3500);
 }

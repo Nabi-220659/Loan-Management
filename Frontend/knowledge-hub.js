@@ -1,162 +1,251 @@
-// ── SCROLL REVEAL ──
-const observer = new IntersectionObserver(entries => {
-  entries.forEach(e => {
-    if (e.isIntersecting) {
-      const siblings = [...e.target.parentElement.children]
-        .filter(c => c.classList.contains('reveal'));
-      siblings.forEach((s, i) => { s.style.transitionDelay = (i * 0.1) + 's'; });
-      e.target.classList.add('visible');
-    }
-  });
-}, { threshold: 0.1 });
-document.querySelectorAll('.reveal').forEach(el => observer.observe(el));
+document.addEventListener('DOMContentLoaded', () => {
 
+  const API_BASE = '../Backend/knowledge-hub';
 
-// ── HERO TOPIC PILLS ──
-document.querySelectorAll('.topic-pill').forEach(pill => {
-  pill.addEventListener('click', () => {
-    document.querySelectorAll('.topic-pill').forEach(p => p.classList.remove('active'));
-    pill.classList.add('active');
-    const topic = pill.dataset.topic;
-    filterArticles(topic);
-  });
-});
+  const BADGE_CLASSES = {
+    loans:   'badge-loans',
+    credit:  'badge-credit',
+    savings: 'badge-savings',
+    tax:     'badge-tax',
+    invest:  'badge-invest',
+    guide:   'badge-guide',
+  };
 
+  const CATEGORY_LABELS = {
+    loans:   'Loans',
+    credit:  'Credit Score',
+    savings: 'Savings',
+    tax:     'Tax',
+    invest:  'Investing',
+    guide:   'Guide',
+  };
 
-// ── CATEGORY FILTER TABS ──
-document.querySelectorAll('.cat-btn').forEach(btn => {
-  btn.addEventListener('click', () => {
-    document.querySelectorAll('.cat-btn').forEach(b => b.classList.remove('active'));
-    btn.classList.add('active');
-    const cat = btn.dataset.cat;
-    filterArticles(cat);
-    // Sync topic pills
-    document.querySelectorAll('.topic-pill').forEach(p => {
-      p.classList.toggle('active', p.dataset.topic === cat);
+  // ── Scroll reveal observer ──────────────────────────────────────────────────
+  const observer = new IntersectionObserver(entries => {
+    entries.forEach(e => {
+      if (e.isIntersecting) {
+        const siblings = [...e.target.parentElement.children]
+          .filter(c => c.classList.contains('reveal'));
+        siblings.forEach((s, idx) => { s.style.transitionDelay = (idx * 0.08) + 's'; });
+        e.target.classList.add('visible');
+      }
     });
-  });
-});
+  }, { threshold: 0.08 });
 
+  function observeReveal() {
+    document.querySelectorAll('.reveal:not(.visible)').forEach(el => observer.observe(el));
+  }
+  observeReveal();
 
-// ── FILTER ARTICLES ──
-function filterArticles(category) {
-  const cards = document.querySelectorAll('.article-card');
-  let visible = 0;
-
-  cards.forEach((card, i) => {
-    const match = category === 'all' || card.dataset.category === category;
-    card.style.display = match ? '' : 'none';
-    if (match) {
-      visible++;
-      card.style.animation = 'none';
-      void card.offsetHeight;
-      card.style.animation = `fadeUp 0.5s ${i * 0.07}s ease both`;
-    }
-  });
-
-  const noResults = document.getElementById('noResults');
-  if (noResults) noResults.style.display = visible === 0 ? 'block' : 'none';
-}
-
-
-// ── LIVE SEARCH ──
-const searchInput = document.getElementById('searchInput');
-if (searchInput) {
-  searchInput.addEventListener('input', () => {
-    const query = searchInput.value.toLowerCase().trim();
-    const cards = document.querySelectorAll('.article-card');
-    let visible = 0;
-
-    cards.forEach(card => {
-      const title   = card.querySelector('.article-title')?.textContent.toLowerCase() || '';
-      const excerpt = card.querySelector('.article-excerpt')?.textContent.toLowerCase() || '';
-      const cat     = card.querySelector('.article-category')?.textContent.toLowerCase() || '';
-      const match   = query === '' || title.includes(query) || excerpt.includes(query) || cat.includes(query);
-      card.style.display = match ? '' : 'none';
-      if (match) visible++;
-    });
-
-    const noResults = document.getElementById('noResults');
-    if (noResults) noResults.style.display = visible === 0 ? 'block' : 'none';
-
-    // Reset category buttons when searching
-    if (query !== '') {
-      document.querySelectorAll('.cat-btn').forEach(b => b.classList.remove('active'));
-      document.querySelectorAll('.topic-pill').forEach(p => p.classList.remove('active'));
-    } else {
-      document.querySelector('.cat-btn[data-cat="all"]')?.classList.add('active');
-    }
-  });
-}
-
-
-// ── EMI CALCULATOR ──
-const loanAmountInput  = document.getElementById('loanAmount');
-const interestInput    = document.getElementById('interestRate');
-const tenureInput      = document.getElementById('tenure');
-
-const loanAmountVal    = document.getElementById('loanAmountVal');
-const interestVal      = document.getElementById('interestVal');
-const tenureVal        = document.getElementById('tenureVal');
-
-const emiAmountEl      = document.getElementById('emiAmount');
-const totalPayableEl   = document.getElementById('totalPayable');
-const totalInterestEl  = document.getElementById('totalInterest');
-
-function formatCurrency(n) {
-  if (n >= 10000000) return '₹' + (n / 10000000).toFixed(2) + ' Cr';
-  if (n >= 100000)   return '₹' + (n / 100000).toFixed(2) + ' L';
-  if (n >= 1000)     return '₹' + (n / 1000).toFixed(1) + 'K';
-  return '₹' + n.toFixed(0);
-}
-
-function calcEMI() {
-  const P  = parseFloat(loanAmountInput.value);
-  const r  = parseFloat(interestInput.value) / 12 / 100;
-  const n  = parseFloat(tenureInput.value);
-
-  loanAmountVal.textContent = formatCurrency(P);
-  interestVal.textContent   = interestInput.value + '% p.a.';
-  tenureVal.textContent     = n + ' months';
-
-  if (r === 0) {
-    const emi = P / n;
-    emiAmountEl.textContent    = formatCurrency(emi);
-    totalPayableEl.textContent = formatCurrency(P);
-    totalInterestEl.textContent = '₹0';
-    return;
+  // ── Render Featured Article ─────────────────────────────────────────────────
+  function renderFeatured(article) {
+    const container = document.getElementById('featuredArticle');
+    if (!container || !article) return;
+    container.innerHTML = `
+      <a href="#" class="featured-card reveal">
+        <div class="featured-img">
+          <img src="${article.image_path}" alt="${article.title}" onerror="this.style.display='none'">
+          <div class="featured-img-overlay"></div>
+          <span class="featured-tag">Must Read</span>
+        </div>
+        <div class="featured-body">
+          <div class="featured-category">📘 Featured Article</div>
+          <h3 class="featured-title">${article.title}</h3>
+          <p class="featured-excerpt">${article.excerpt}</p>
+          <div class="featured-meta">
+            <span>${article.author}</span>
+            <span class="meta-dot"></span>
+            <span>${article.date}</span>
+            <span class="meta-dot"></span>
+            <span>${article.read_time} min read</span>
+          </div>
+          <span class="read-more">Read Article →</span>
+        </div>
+      </a>`;
+    observeReveal();
   }
 
-  const emi          = P * r * Math.pow(1 + r, n) / (Math.pow(1 + r, n) - 1);
-  const totalPayable = emi * n;
-  const totalInterest = totalPayable - P;
+  // ── Render Articles Grid ────────────────────────────────────────────────────
+  function renderArticles(articles) {
+    const grid  = document.getElementById('articlesGrid');
+    const noRes = document.getElementById('noResults');
+    if (!grid) return;
 
-  emiAmountEl.textContent     = formatCurrency(emi);
-  totalPayableEl.textContent  = formatCurrency(totalPayable);
-  totalInterestEl.textContent = formatCurrency(totalInterest);
-}
+    const gridArticles = (articles || []).filter(a => !a.is_featured);
 
-if (loanAmountInput) {
-  [loanAmountInput, interestInput, tenureInput].forEach(el => {
-    el.addEventListener('input', calcEMI);
-  });
-  calcEMI(); // initial render
-}
-
-
-// ── NEWSLETTER FORM ──
-const newsletterForm = document.querySelector('.newsletter-form');
-if (newsletterForm) {
-  newsletterForm.addEventListener('submit', e => {
-    e.preventDefault();
-    const input = newsletterForm.querySelector('input[type="email"]');
-    const btn   = newsletterForm.querySelector('button');
-    if (input.value.trim()) {
-      btn.textContent = '✓ Subscribed!';
-      btn.style.background = '#10b981';
-      input.value = '';
-      input.disabled = true;
-      btn.disabled   = true;
+    if (gridArticles.length === 0) {
+      grid.innerHTML = '';
+      if (noRes) noRes.style.display = 'block';
+      return;
     }
+    if (noRes) noRes.style.display = 'none';
+
+    grid.innerHTML = gridArticles.map(a => {
+      const badge = BADGE_CLASSES[a.category] || '';
+      const label = CATEGORY_LABELS[a.category] || a.category;
+      return `
+        <a href="#" class="article-card reveal" data-category="${a.category}">
+          <div class="article-img">
+            <img src="${a.image_path}" alt="${a.title}" onerror="this.style.display='none'">
+            <span class="article-cat-badge ${badge}">${label}</span>
+          </div>
+          <div class="article-body">
+            <div class="article-category">${label}</div>
+            <h3 class="article-title">${a.title}</h3>
+            <p class="article-excerpt">${a.excerpt}</p>
+            <div class="article-footer">
+              <span class="read-time">⏱ ${a.read_time} min read</span>
+              <span>${a.date}</span>
+            </div>
+          </div>
+        </a>`;
+    }).join('');
+
+    observeReveal();
+  }
+
+  // ── Fetch articles from backend ─────────────────────────────────────────────
+  let currentCategory = 'all';
+  let currentSearch   = '';
+
+  function fetchArticles(category, search) {
+    category = category || 'all';
+    search   = search   || '';
+
+    let url = API_BASE + '/get_articles.php?v=' + Date.now();
+    if (category !== 'all') url += '&category=' + encodeURIComponent(category);
+    if (search)             url += '&search='   + encodeURIComponent(search);
+
+    fetch(url)
+      .then(r => r.json())
+      .then(data => {
+        if (data.success) renderArticles(data.data);
+        else console.error('API error:', data.message);
+      })
+      .catch(err => console.error('Fetch failed:', err));
+  }
+
+  // ── Initial page load ───────────────────────────────────────────────────────
+  // Featured article
+  fetch(API_BASE + '/get_articles.php?featured=1')
+    .then(r => r.json())
+    .then(data => {
+      if (data.success && data.data.length > 0) renderFeatured(data.data[0]);
+    })
+    .catch(err => console.error('Featured fetch failed:', err));
+
+  // All articles grid
+  fetchArticles();
+
+  // ── Category filter buttons (middle of page) ────────────────────────────────
+  document.querySelectorAll('.cat-btn').forEach(btn => {
+    btn.addEventListener('click', () => {
+      document.querySelectorAll('.cat-btn').forEach(b => b.classList.remove('active'));
+      btn.classList.add('active');
+      currentCategory = btn.dataset.cat;
+      fetchArticles(currentCategory, currentSearch);
+    });
   });
-}
+
+  // ── Topic pills (hero section) ──────────────────────────────────────────────
+  document.querySelectorAll('.topic-pill').forEach(pill => {
+    pill.addEventListener('click', () => {
+      document.querySelectorAll('.topic-pill').forEach(p => p.classList.remove('active'));
+      pill.classList.add('active');
+      currentCategory = pill.dataset.topic;
+      // Keep cat-buttons in sync
+      document.querySelectorAll('.cat-btn').forEach(b => {
+        b.classList.toggle('active', b.dataset.cat === currentCategory);
+      });
+      fetchArticles(currentCategory, currentSearch);
+      // Scroll to articles section
+      const articles = document.querySelector('.articles-section');
+      if (articles) articles.scrollIntoView({ behavior: 'smooth', block: 'start' });
+    });
+  });
+
+  // ── Search bar (debounced) ──────────────────────────────────────────────────
+  const searchInput = document.getElementById('searchInput');
+  let searchTimer;
+  if (searchInput) {
+    searchInput.addEventListener('input', () => {
+      clearTimeout(searchTimer);
+      searchTimer = setTimeout(() => {
+        currentSearch = searchInput.value.trim();
+        fetchArticles(currentCategory, currentSearch);
+      }, 350);
+    });
+  }
+
+  // ── Newsletter form ─────────────────────────────────────────────────────────
+  const form    = document.getElementById('newsletterForm');
+  const emailEl = document.getElementById('newsletterEmail');
+  const msgEl   = document.getElementById('newsletterMsg');
+
+  if (form) {
+    form.addEventListener('submit', e => {
+      e.preventDefault();
+      const email = emailEl.value.trim();
+      if (!email) return;
+      const btn = form.querySelector('button[type="submit"]');
+      btn.textContent = 'Subscribing…';
+      btn.disabled = true;
+
+      fetch(API_BASE + '/subscribe_newsletter.php', {
+        method:  'POST',
+        headers: { 'Content-Type': 'application/json' },
+        body:    JSON.stringify({ email }),
+      })
+        .then(r => r.json())
+        .then(data => {
+          if (data.success) {
+            msgEl.textContent = '🎉 ' + data.message;
+            msgEl.style.color = '#4ade80';
+            emailEl.value = '';
+          } else {
+            msgEl.textContent = '⚠️ ' + data.message;
+            msgEl.style.color = '#f87171';
+          }
+        })
+        .catch(() => {
+          msgEl.textContent = '⚠️ Something went wrong. Please try again.';
+          msgEl.style.color = '#f87171';
+        })
+        .finally(() => {
+          btn.textContent = 'Subscribe';
+          btn.disabled = false;
+        });
+    });
+  }
+
+  // ── EMI Calculator (no backend needed) ─────────────────────────────────────
+  const loanSlider    = document.getElementById('loanAmount');
+  const rateSlider    = document.getElementById('interestRate');
+  const tenureSlider  = document.getElementById('tenure');
+
+  function formatINR(n) {
+    if (n >= 10000000) return '₹' + (n / 10000000).toFixed(1) + ' Cr';
+    if (n >= 100000)   return '₹' + (n / 100000).toFixed(1) + ' L';
+    if (n >= 1000)     return '₹' + (n / 1000).toFixed(0) + 'K';
+    return '₹' + n;
+  }
+
+  function calcEMI() {
+    if (!loanSlider) return;
+    const P = parseFloat(loanSlider.value);
+    const r = parseFloat(rateSlider.value) / 100 / 12;
+    const n = parseInt(tenureSlider.value);
+    document.getElementById('loanAmountVal').textContent = formatINR(P);
+    document.getElementById('interestVal').textContent   = rateSlider.value + '% p.a.';
+    document.getElementById('tenureVal').textContent     = n + ' months';
+    const emi   = r === 0 ? P / n : P * r * Math.pow(1 + r, n) / (Math.pow(1 + r, n) - 1);
+    const total = emi * n;
+    document.getElementById('emiAmount').textContent     = formatINR(Math.round(emi));
+    document.getElementById('totalPayable').textContent  = formatINR(Math.round(total));
+    document.getElementById('totalInterest').textContent = formatINR(Math.round(total - P));
+  }
+
+  [loanSlider, rateSlider, tenureSlider].forEach(s => s && s.addEventListener('input', calcEMI));
+  calcEMI();
+
+});

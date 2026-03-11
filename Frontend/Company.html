@@ -5,7 +5,7 @@
   <meta name="viewport" content="width=device-width, initial-scale=1.0">
   <title>Company — FUNDBEE</title>
   <link href="https://fonts.googleapis.com/css2?family=Playfair+Display:ital,wght@0,400;0,700;0,900;1,400;1,700&family=DM+Sans:wght@300;400;500;600&display=swap" rel="stylesheet">
-  <link rel="stylesheet" href="/Frontend/Company.css">
+  <link rel="stylesheet" href="Company.css">
 </head>
 <body>
 
@@ -13,12 +13,12 @@
   <nav>
     <a href="index.html" class="nav-logo">FUND<span>BEE</span></a>
     <ul class="nav-links">
-      <li><a href="/Frontend/Products.html">Products</a></li>
-      <li><a href="/Frontend/Company.html" class="active">Company</a></li>
-      <li><a href="/Frontend/knowledge-hub.html">Knowledge Hub</a></li>
-      <li><a href="/Frontend/partner.html">Partner</a></li>
-      <li><a href="/Frontend/login.html">Login</a></li>
-      <li><a href="/Frontend/become-a-partner.html" class="nav-cta">Apply Now</a></li>
+      <li><a href="Products.html">Products</a></li>
+      <li><a href="Company.html" class="active">Company</a></li>
+      <li><a href="knowledge-hub.html">Knowledge Hub</a></li>
+      <li><a href="partner.html">Partner</a></li>
+      <li><a href="login.html">Login</a></li>
+
     </ul>
   </nav>
 
@@ -30,23 +30,8 @@
         <h1>Built on Trust,<br>Driven by <em>Purpose</em></h1>
         <p>FUNDBEE Finance Limited is an RBI Registered NBFC on a mission to make credit accessible, transparent, and human. We've been empowering Indians since 2014 — one loan at a time.</p>
       </div>
-      <div class="hero-right">
-        <div class="hero-stat">
-          <div class="hero-stat-num">10+</div>
-          <div class="hero-stat-label">Years in Operation</div>
-        </div>
-        <div class="hero-stat">
-          <div class="hero-stat-num">25K+</div>
-          <div class="hero-stat-label">Happy Customers</div>
-        </div>
-        <div class="hero-stat">
-          <div class="hero-stat-num">₹500Cr+</div>
-          <div class="hero-stat-label">Total Disbursed</div>
-        </div>
-        <div class="hero-stat">
-          <div class="hero-stat-num">98%</div>
-          <div class="hero-stat-label">Satisfaction Rate</div>
-        </div>
+      <div class="hero-right" id="stats-container">
+        <!-- Stats injected via JS -->
       </div>
     </div>
   </section>
@@ -97,68 +82,8 @@
         <div class="eyebrow">Our Journey</div>
         <h2 class="section-title" style="color:var(--white)">A Decade of Making<br>Credit <em style="color:var(--gold)">Accessible</em></h2>
       </div>
-      <div class="timeline">
-
-        <div class="timeline-item reveal">
-          <div class="tl-content">
-            <div class="tl-year">2014</div>
-            <div class="tl-title">FUNDBEE Founded</div>
-            <div class="tl-desc">Incorporated in Mumbai as an NBFC with a vision to democratise lending for urban and semi-urban India.</div>
-          </div>
-          <div class="tl-spacer"><div class="tl-dot"></div></div>
-          <div class="tl-empty"></div>
-        </div>
-
-        <div class="timeline-item reveal">
-          <div class="tl-empty"></div>
-          <div class="tl-spacer"><div class="tl-dot"></div></div>
-          <div class="tl-content">
-            <div class="tl-year">2016</div>
-            <div class="tl-title">RBI Registration</div>
-            <div class="tl-desc">Received official NBFC licence from the Reserve Bank of India, cementing our regulatory standing.</div>
-          </div>
-        </div>
-
-        <div class="timeline-item reveal">
-          <div class="tl-content">
-            <div class="tl-year">2018</div>
-            <div class="tl-title">Digital Platform Launch</div>
-            <div class="tl-desc">Launched India's first fully digital personal loan app with end-to-end paperless processing and same-day approvals.</div>
-          </div>
-          <div class="tl-spacer"><div class="tl-dot"></div></div>
-          <div class="tl-empty"></div>
-        </div>
-
-        <div class="timeline-item reveal">
-          <div class="tl-empty"></div>
-          <div class="tl-spacer"><div class="tl-dot"></div></div>
-          <div class="tl-content">
-            <div class="tl-year">2020</div>
-            <div class="tl-title">₹100 Crore Milestone</div>
-            <div class="tl-desc">Crossed ₹100 Crore in total loan disbursals, serving customers across 12 Indian states.</div>
-          </div>
-        </div>
-
-        <div class="timeline-item reveal">
-          <div class="tl-content">
-            <div class="tl-year">2022</div>
-            <div class="tl-title">Business Loans Launched</div>
-            <div class="tl-desc">Expanded our product suite to include SME business loans, helping thousands of entrepreneurs grow their ventures.</div>
-          </div>
-          <div class="tl-spacer"><div class="tl-dot"></div></div>
-          <div class="tl-empty"></div>
-        </div>
-
-        <div class="timeline-item reveal">
-          <div class="tl-empty"></div>
-          <div class="tl-spacer"><div class="tl-dot"></div></div>
-          <div class="tl-content">
-            <div class="tl-year">2024</div>
-            <div class="tl-title">₹500 Crore & 25,000 Customers</div>
-            <div class="tl-desc">Reached landmark milestones with over ₹500 Crore disbursed and 25,000 satisfied customers across India.</div>
-          </div>
-        </div>
-
+      <div class="timeline" id="timeline-container">
+        <!-- Timeline injected via JS -->
       </div>
     </div>
   </section>
@@ -169,39 +94,8 @@
       <div class="eyebrow">Leadership</div>
       <h2 class="section-title">The Team Behind<br><em>FUNDBEE</em></h2>
     </div>
-    <div class="team-grid">
-      <div class="team-card reveal">
-        <div class="team-avatar bg1">👨‍💼</div>
-        <div class="team-body">
-          <div class="team-name">Arjun Mehta</div>
-          <div class="team-role">Founder & CEO</div>
-          <div class="team-bio">20+ years in financial services. Former VP at HDFC Bank. IIM Ahmedabad alumnus with a passion for financial inclusion.</div>
-        </div>
-      </div>
-      <div class="team-card reveal">
-        <div class="team-avatar bg2">👩‍💼</div>
-        <div class="team-body">
-          <div class="team-name">Priya Sharma</div>
-          <div class="team-role">Co-Founder & COO</div>
-          <div class="team-bio">Built lending operations at Bajaj Finance. Expert in credit risk and process automation. IIT Delhi graduate.</div>
-        </div>
-      </div>
-      <div class="team-card reveal">
-        <div class="team-avatar bg3">👨‍💻</div>
-        <div class="team-body">
-          <div class="team-name">Rohan Nair</div>
-          <div class="team-role">Chief Technology Officer</div>
-          <div class="team-bio">Ex-Flipkart senior engineer. Built the ML-powered underwriting engine that enables our sub-2-hour approvals.</div>
-        </div>
-      </div>
-      <div class="team-card reveal">
-        <div class="team-avatar bg4">👩‍⚖️</div>
-        <div class="team-body">
-          <div class="team-name">Kavitha Reddy</div>
-          <div class="team-role">Chief Risk Officer</div>
-          <div class="team-bio">15 years in credit risk management across ICICI and Kotak. Architect of FUNDBEE's zero-NPA strategy.</div>
-        </div>
-      </div>
+    <div class="team-grid" id="team-container">
+      <!-- Team injected via JS -->
     </div>
   </section>
 
@@ -212,31 +106,8 @@
         <div class="eyebrow">Recognition</div>
         <h2 class="section-title">Awards &amp; Certifications</h2>
       </div>
-      <div class="awards-grid">
-        <div class="award-card reveal">
-          <div class="award-icon">🏆</div>
-          <div class="award-title">Best Digital Lender</div>
-          <div class="award-org">FICCI Financial Services Awards</div>
-          <div class="award-year">2023</div>
-        </div>
-        <div class="award-card reveal">
-          <div class="award-icon">⭐</div>
-          <div class="award-title">Top NBFC of the Year</div>
-          <div class="award-org">Economic Times BFSI Summit</div>
-          <div class="award-year">2022</div>
-        </div>
-        <div class="award-card reveal">
-          <div class="award-icon">🔐</div>
-          <div class="award-title">ISO 27001 Certified</div>
-          <div class="award-org">Information Security Management</div>
-          <div class="award-year">2021</div>
-        </div>
-        <div class="award-card reveal">
-          <div class="award-icon">🌱</div>
-          <div class="award-title">Fintech Innovator Award</div>
-          <div class="award-org">NASSCOM India Leadership Forum</div>
-          <div class="award-year">2024</div>
-        </div>
+      <div class="awards-grid" id="awards-container">
+        <!-- Awards injected via JS -->
       </div>
     </div>
   </section>
@@ -283,7 +154,7 @@
         <p>Apply for a loan today — fast, transparent, and fully online.</p>
       </div>
       <div class="cta-btns">
-        <a href="#" class="btn-white">Apply Now</a>
+        <a href="login.html" class="btn-white">Apply Now</a>
         <a href="#" class="btn-ghost-white">Talk to Us</a>
       </div>
     </div>
@@ -327,6 +198,7 @@
       </div>
     </div>
   </footer>
-  <script src="/Frontend/Comapany.js"></script>
+  <script src="nav.js"></script>
+  <script src="Company.js"></script>
 </body>
 </html>
