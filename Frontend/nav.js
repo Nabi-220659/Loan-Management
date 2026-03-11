@@ -14,7 +14,7 @@
   }
 
   // ── 2. Inject "Apply Now" only when logged in ──
-  const isLoggedIn = localStorage.getItem('fundbee_logged_in') === 'true';
+  const isLoggedIn = sessionStorage.getItem('fundbee_logged_in') === 'true';
   if (isLoggedIn) {
     // Don't add a duplicate if it's already there (e.g. become-a-partner.html)
     const existing = navLinks.querySelector('a[href="become-a-partner.html"].nav-cta');

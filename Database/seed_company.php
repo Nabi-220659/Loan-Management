@@ -39,10 +39,12 @@ echo "✅ milestones — " . $db->milestones->countDocuments() . " documents ins
 // 3. TEAM MEMBERS
 $db->team_members->drop();
 $db->team_members->insertMany([
-    ['name' => 'Arjun Mehta', 'role' => 'Founder & CEO', 'bio' => '20+ years in financial services. Former VP at HDFC Bank. IIM Ahmedabad alumnus with a passion for financial inclusion.', 'avatar' => '👨‍💼', 'bg_class' => 'bg1', 'display_order' => 1],
-    ['name' => 'Priya Sharma', 'role' => 'Co-Founder & COO', 'bio' => 'Built lending operations at Bajaj Finance. Expert in credit risk and process automation. IIT Delhi graduate.', 'avatar' => '👩‍💼', 'bg_class' => 'bg2', 'display_order' => 2],
-    ['name' => 'Rohan Nair', 'role' => 'Chief Technology Officer', 'bio' => 'Ex-Flipkart senior engineer. Built the ML-powered underwriting engine that enables our sub-2-hour approvals.', 'avatar' => '👨‍💻', 'bg_class' => 'bg3', 'display_order' => 3],
-    ['name' => 'Kavitha Reddy', 'role' => 'Chief Risk Officer', 'bio' => '15 years in credit risk management across ICICI and Kotak. Architect of FUNDBEE\'s zero-NPA strategy.', 'avatar' => '👩‍⚖️', 'bg_class' => 'bg4', 'display_order' => 4],
+    ['name' => 'Yo Soy Nabi', 'role' => 'Founder & CEO', 'bio' => '20+ years in financial services. Former VP at HDFC Bank. IIM Ahmedabad alumnus with a passion for financial inclusion.', 'avatar' => '👨‍💼', 'bg_class' => 'bg1', 'display_order' => 1],
+    ['name' => 'Madhuri', 'role' => 'Co-Founder & COO', 'bio' => 'Built lending operations at Bajaj Finance. Expert in credit risk and process automation. IIT Delhi graduate.', 'avatar' => '👩‍💼', 'bg_class' => 'bg2', 'display_order' => 2],
+    ['name' => 'Sowmya', 'role' => 'Chief Technology Officer', 'bio' => 'Ex-Flipkart senior engineer. Built the ML-powered underwriting engine that enables our sub-2-hour approvals.', 'avatar' => '👨‍💻', 'bg_class' => 'bg3', 'display_order' => 3],
+    ['name' => 'Abhinaya', 'role' => 'Chief Risk Officer', 'bio' => '15 years in credit risk management across ICICI and Kotak. Architect of FUNDBEE\'s zero-NPA strategy.', 'avatar' => '👩‍⚖️', 'bg_class' => 'bg4', 'display_order' => 4],
+    ['name' => 'Pushpa', 'role' => 'Assistant Tecnology Officer', 'bio' => 'Ex-Flipkart senior engineer. Built the ML-powered underwriting engine that enables our sub-2-hour approvals.', 'avatar' => '👨‍💻', 'bg_class' => 'bg3', 'display_order' => 3],
+    ['name' => 'Vyshnavi', 'role' => 'Task Manager', 'bio' => '15 years in credit risk management across ICICI and Kotak. Architect of FUNDBEE\'s zero-NPA strategy.', 'avatar' => '👩‍⚖️', 'bg_class' => 'bg4', 'display_order' => 4]
 ]);
 echo "✅ team_members — " . $db->team_members->countDocuments() . " documents inserted\n";
 

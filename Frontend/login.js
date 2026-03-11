@@ -130,7 +130,7 @@ if (loginForm) {
     btn.classList.add('loading');
     setTimeout(() => {
       btn.classList.remove('loading');
-      localStorage.setItem('fundbee_logged_in', 'true'); // ── mark logged in
+      sessionStorage.setItem('fundbee_logged_in', 'true'); // ── mark logged in
       document.getElementById('loginSuccessScreen').style.display = 'block';
       loginForm.style.display = 'none';
     }, 1600);
@@ -227,7 +227,7 @@ if (otpForm) {
     btn.classList.add('loading');
     setTimeout(() => {
       btn.classList.remove('loading');
-      localStorage.setItem('fundbee_logged_in', 'true'); // ── mark logged in
+      sessionStorage.setItem('fundbee_logged_in', 'true'); // ── mark logged in
       document.getElementById('otpScreen').style.display = 'none';
       document.getElementById('registerSuccessScreen').style.display = 'block';
     }, 1400);
