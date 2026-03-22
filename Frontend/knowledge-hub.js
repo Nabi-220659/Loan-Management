@@ -3,21 +3,21 @@ document.addEventListener('DOMContentLoaded', () => {
   const API_BASE = '../Backend/knowledge-hub';
 
   const BADGE_CLASSES = {
-    loans:   'badge-loans',
-    credit:  'badge-credit',
+    loans: 'badge-loans',
+    credit: 'badge-credit',
     savings: 'badge-savings',
-    tax:     'badge-tax',
-    invest:  'badge-invest',
-    guide:   'badge-guide',
+    tax: 'badge-tax',
+    invest: 'badge-invest',
+    guide: 'badge-guide',
   };
 
   const CATEGORY_LABELS = {
-    loans:   'Loans',
-    credit:  'Credit Score',
+    loans: 'Loans',
+    credit: 'Credit Score',
     savings: 'Savings',
-    tax:     'Tax',
-    invest:  'Investing',
-    guide:   'Guide',
+    tax: 'Tax',
+    invest: 'Investing',
+    guide: 'Guide',
   };
 
   // ── Scroll reveal observer ──────────────────────────────────────────────────
@@ -67,7 +67,7 @@ document.addEventListener('DOMContentLoaded', () => {
 
   // ── Render Articles Grid ────────────────────────────────────────────────────
   function renderArticles(articles) {
-    const grid  = document.getElementById('articlesGrid');
+    const grid = document.getElementById('articlesGrid');
     const noRes = document.getElementById('noResults');
     if (!grid) return;
 
@@ -106,15 +106,15 @@ document.addEventListener('DOMContentLoaded', () => {
 
   // ── Fetch articles from backend ─────────────────────────────────────────────
   let currentCategory = 'all';
-  let currentSearch   = '';
+  let currentSearch = '';
 
   function fetchArticles(category, search) {
     category = category || 'all';
-    search   = search   || '';
+    search = search || '';
 
     let url = API_BASE + '/get_articles.php?v=' + Date.now();
     if (category !== 'all') url += '&category=' + encodeURIComponent(category);
-    if (search)             url += '&search='   + encodeURIComponent(search);
+    if (search) url += '&search=' + encodeURIComponent(search);
 
     fetch(url)
       .then(r => r.json())
@@ -178,9 +178,9 @@ document.addEventListener('DOMContentLoaded', () => {
   }
 
   // ── Newsletter form ─────────────────────────────────────────────────────────
-  const form    = document.getElementById('newsletterForm');
+  const form = document.getElementById('newsletterForm');
   const emailEl = document.getElementById('newsletterEmail');
-  const msgEl   = document.getElementById('newsletterMsg');
+  const msgEl = document.getElementById('newsletterMsg');
 
   if (form) {
     form.addEventListener('submit', e => {
@@ -192,9 +192,9 @@ document.addEventListener('DOMContentLoaded', () => {
       btn.disabled = true;
 
       fetch(API_BASE + '/subscribe_newsletter.php', {
-        method:  'POST',
+        method: 'POST',
         headers: { 'Content-Type': 'application/json' },
-        body:    JSON.stringify({ email }),
+        body: JSON.stringify({ email }),
       })
         .then(r => r.json())
         .then(data => {
@@ -219,14 +219,14 @@ document.addEventListener('DOMContentLoaded', () => {
   }
 
   // ── EMI Calculator (no backend needed) ─────────────────────────────────────
-  const loanSlider    = document.getElementById('loanAmount');
-  const rateSlider    = document.getElementById('interestRate');
-  const tenureSlider  = document.getElementById('tenure');
+  const loanSlider = document.getElementById('loanAmount');
+  const rateSlider = document.getElementById('interestRate');
+  const tenureSlider = document.getElementById('tenure');
 
   function formatINR(n) {
     if (n >= 10000000) return '₹' + (n / 10000000).toFixed(1) + ' Cr';
-    if (n >= 100000)   return '₹' + (n / 100000).toFixed(1) + ' L';
-    if (n >= 1000)     return '₹' + (n / 1000).toFixed(0) + 'K';
+    if (n >= 100000) return '₹' + (n / 100000).toFixed(1) + ' L';
+    if (n >= 1000) return '₹' + (n / 1000).toFixed(0) + 'K';
     return '₹' + n;
   }
 
@@ -236,12 +236,12 @@ document.addEventListener('DOMContentLoaded', () => {
     const r = parseFloat(rateSlider.value) / 100 / 12;
     const n = parseInt(tenureSlider.value);
     document.getElementById('loanAmountVal').textContent = formatINR(P);
-    document.getElementById('interestVal').textContent   = rateSlider.value + '% p.a.';
-    document.getElementById('tenureVal').textContent     = n + ' months';
-    const emi   = r === 0 ? P / n : P * r * Math.pow(1 + r, n) / (Math.pow(1 + r, n) - 1);
+    document.getElementById('interestVal').textContent = rateSlider.value + '% p.a.';
+    document.getElementById('tenureVal').textContent = n + ' months';
+    const emi = r === 0 ? P / n : P * r * Math.pow(1 + r, n) / (Math.pow(1 + r, n) - 1);
     const total = emi * n;
-    document.getElementById('emiAmount').textContent     = formatINR(Math.round(emi));
-    document.getElementById('totalPayable').textContent  = formatINR(Math.round(total));
+    document.getElementById('emiAmount').textContent = formatINR(Math.round(emi));
+    document.getElementById('totalPayable').textContent = formatINR(Math.round(total));
     document.getElementById('totalInterest').textContent = formatINR(Math.round(total - P));
   }
 
