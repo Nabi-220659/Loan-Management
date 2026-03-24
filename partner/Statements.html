@@ -201,17 +201,17 @@
             <div class="nav-section-label">Overview</div>
             <a class="nav-item" href="partner1.html"><span class="nav-item-icon">📊</span> Dashboard</a>
             <a class="nav-item" href="earnings.html"><span class="nav-item-icon">💰</span> My Earnings</a>
-            <a class="nav-item" href="portfolio.html"><span class="nav-item-icon">📁</span> Portfolio</a>
-            <a class="nav-item" href="analytics.html"><span class="nav-item-icon">📈</span> Analytics</a>
+            <a class="nav-item" href="Portfolio.html"><span class="nav-item-icon">📁</span> Portfolio</a>
+            <a class="nav-item" href="Analytics.html"><span class="nav-item-icon">📈</span> Analytics</a>
             <div class="nav-section-label" style="margin-top:10px">Management</div>
-            <a class="nav-item" href="borrowers.html"><span class="nav-item-icon">👥</span> My Borrowers</a>
-            <a class="nav-item" href="applications.html"><span class="nav-item-icon">📋</span> Applications</a>
-            <a class="nav-item" href="withdrawals.html"><span class="nav-item-icon">🏦</span> Withdrawals</a>
-            <a class="nav-item active-green" href="statements.html"><span class="nav-item-icon">📄</span> Statements</a>
+            <a class="nav-item" href="Borrowers.html"><span class="nav-item-icon">👥</span> My Borrowers</a>
+            <a class="nav-item" href="Applications.html"><span class="nav-item-icon">📋</span> Applications</a>
+            <a class="nav-item" href="Withdrawls.html"><span class="nav-item-icon">🏦</span> Withdrawals</a>
+            <a class="nav-item active-green" href="Statements.html"><span class="nav-item-icon">📄</span> Statements</a>
             <div class="nav-section-label" style="margin-top:10px">Premium</div>
-            <a class="nav-item" href="risk-insights.html"><span class="nav-item-icon">⚡</span> Risk Insights</a>
-            <a class="nav-item" href="deal-matcher.html"><span class="nav-item-icon">🎯</span> Deal Matcher</a>
-            <a class="nav-item" href="partner-settings.html"><span class="nav-item-icon">⚙️</span> Settings</a>
+            <a class="nav-item" href="Risk_insights.html"><span class="nav-item-icon">⚡</span> Risk Insights</a>
+            <a class="nav-item" href="Deal_matcher.html"><span class="nav-item-icon">🎯</span> Deal Matcher</a>
+            <a class="nav-item" href="partner_settings.html"><span class="nav-item-icon">⚙️</span> Settings</a>
         </nav>
         <div class="sidebar-footer">
             <div class="logout-btn" onclick="window.location.href='login.html'">🚪 Sign Out</div>
@@ -382,7 +382,65 @@
     <div id="toast"
         style="position:fixed;bottom:28px;right:28px;background:#0d1f38;border:1px solid rgba(255,255,255,0.1);color:white;padding:14px 22px;border-radius:12px;font-size:14px;font-weight:600;box-shadow:0 10px 30px rgba(0,0,0,0.4);transform:translateY(80px);transition:transform 0.3s;z-index:9999">
         Done</div>
-    <script>function toast(msg) { const t = document.getElementById('toast'); t.textContent = msg; t.style.transform = 'translateY(0)'; setTimeout(() => t.style.transform = 'translateY(80px)', 2800); }</script>
-</body>
+    <script>
+        function toast(msg) {
+            const t = document.getElementById('toast');
+            t.textContent = msg;
+            t.style.transform = 'translateY(0)';
+            setTimeout(() => t.style.transform = 'translateY(80px)', 2800);
+        }
+
+        function simulateDownload(filename, isExcel = false) {
+            toast(`⏳ Generating ${filename}...`);
+            setTimeout(() => {
+                // Mock content
+                const content = isExcel ? "Date,Amount,Type\n2026-03-01,150000,Disbursement" : "FUNDBEE PARTNER STATEMENT\nThis is a securely generated document simulation.";
+                const mime = isExcel ? "text/csv" : "application/pdf";
+                const ext = isExcel ? ".csv" : ".pdf";
+                
+                const blob = new Blob([content], { type: mime });
+                const url = URL.createObjectURL(blob);
+                const a = document.createElement('a');
+                a.href = url;
+                a.download = `${filename}${ext}`;
+                document.body.appendChild(a);
+                a.click();
+                document.body.removeChild(a);
+                URL.revokeObjectURL(url);
+                
+                toast(`✅ Securely Downloaded ${filename}${ext}`);
+            }, 1200);
+        }
+
+        document.addEventListener('DOMContentLoaded', () => {
+            // Header buttons
+            document.querySelectorAll('.stmt-actions .dl-btn').forEach(btn => {
+                btn.onclick = (e) => {
+                    e.preventDefault();
+                    const isExcel = btn.textContent.includes('Excel');
+                    simulateDownload(isExcel ? 'Custom_Statement_Export' : 'Custom_Statement_Report', isExcel);
+                };
+            });
+            // Statement card buttons
+            document.querySelectorAll('.stmt-card').forEach(card => {
+                const titleNode = card.querySelector('.stmt-name');
+                if(!titleNode) return;
+                
+                // Clean filename
+                let name = titleNode.textContent.replace(/[^a-zA-Z0-9_\- ]/g, '').trim().replace(/ /g, '_');
+                
+                const btn = card.querySelector('.dl-icon-btn');
+                if (btn) {
+                    btn.onclick = (e) => {
+                        e.preventDefault();
+                        e.stopPropagation();
+                        const metaNode = card.querySelector('.stmt-size');
+                        const isExcel = metaNode && metaNode.textContent.includes('Excel');
+                        simulateDownload(name, isExcel);
+                    };
+                }
+            });
+        });
+    </script>
 
 </html>

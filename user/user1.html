@@ -1229,57 +1229,7 @@
 
 <body>
 
-  <!-- ═══════════════════════ LOGIN OVERLAY ═══════════════════════ -->
-  <div class="overlay" id="overlay">
-
-    <!-- Step 1: Login Form -->
-    <div class="overlay-panel" id="loginPanel">
-      <div class="auth-card">
-        <div class="auth-logo">FUND<span>BEE</span></div>
-        <div class="auth-subtitle">Sign in to your account to continue</div>
-
-        <label class="auth-label">Email Address</label>
-        <input class="auth-input" type="email" id="authEmail" placeholder="you@example.com">
-
-        <label class="auth-label">Password</label>
-        <input class="auth-input" type="password" id="authPass" placeholder="••••••••">
-
-        <div class="auth-error" id="authError">⚠ Please enter your email and password.</div>
-
-        <button class="auth-btn" onclick="handleLogin()">Sign In</button>
-      </div>
-    </div>
-
-    <!-- Step 2: Role Selection -->
-    <div class="overlay-panel hidden" id="rolePanel">
-      <div class="role-card">
-        <div class="role-eyebrow">Welcome Back</div>
-        <div class="role-heading">How would you like<br>to continue?</div>
-        <div class="role-sub">Choose your role to access your personalised dashboard</div>
-
-        <div class="role-options">
-          <div class="role-option user-opt" onclick="enterUserDashboard()">
-            <div class="role-icon gold">👤</div>
-            <div class="role-info">
-              <h4>Continue as User</h4>
-              <p>Apply for loans, track EMIs & manage repayments</p>
-            </div>
-            <div class="role-arrow">›</div>
-          </div>
-          <div class="role-option partner-opt" onclick="goToPartner()">
-            <div class="role-icon green">💼</div>
-            <div class="role-info">
-              <h4>Continue as Partner</h4>
-              <p>Access earnings, portfolio & premium analytics</p>
-            </div>
-            <div class="role-arrow">›</div>
-          </div>
-        </div>
-      </div>
-    </div>
-
-  </div>
-
+  <!-- Login overlay removed -->
   <!-- ═══════════════════════ SIDEBAR ═══════════════════════ -->
   <aside class="sidebar">
     <div class="sidebar-logo">FUND<span>BEE</span></div>
@@ -1295,21 +1245,21 @@
       <a class="nav-item" href="#" onclick="openLoanModal(); return false;">
         <span class="nav-item-icon">📋</span> Apply for Loan
       </a>
-      <a class="nav-item" href="my-loans.html">
+      <a class="nav-item" href="My_loans.html">
         <span class="nav-item-icon">🔄</span> My Loans
       </a>
-      <a class="nav-item" href="emi-schedule.html">
+      <a class="nav-item" href="Emi_Schedule.html">
         <span class="nav-item-icon">📅</span> EMI Schedule
       </a>
 
       <div class="nav-section-label" style="margin-top:10px">Account</div>
-      <a class="nav-item" href="documents.html">
+      <a class="nav-item" href="Documents.html">
         <span class="nav-item-icon">📁</span> Documents
       </a>
-      <a class="nav-item" href="notifications.html">
+      <a class="nav-item" href="Notificatons.html">
         <span class="nav-item-icon">🔔</span> Notifications
       </a>
-      <a class="nav-item" href="user-settings.html">
+      <a class="nav-item" href="user_settings.html">
         <span class="nav-item-icon">⚙️</span> Settings
       </a>
 
@@ -1335,9 +1285,6 @@
     <div class="topbar">
       <div class="topbar-title">User Dashboard</div>
       <div class="topbar-right">
-        <button class="apply-btn" onclick="openLoanModal()">
-          ＋ Apply for Loan
-        </button>
         <div class="notif-btn">🔔<div class="notif-dot"></div>
         </div>
         <div class="avatar">AS</div>
@@ -1684,57 +1631,15 @@
   </div>
 
   <script>
-    /* ── Overlay flow ── */
-    function handleLogin() {
-      const email = document.getElementById('authEmail').value.trim();
-      const pass = document.getElementById('authPass').value.trim();
-      const err = document.getElementById('authError');
-      if (!email || !pass) { err.style.display = 'block'; return; }
-      err.style.display = 'none';
-      document.getElementById('loginPanel').classList.add('hidden');
-      document.getElementById('rolePanel').classList.remove('hidden');
-    }
-
-    function enterUserDashboard() {
-      const overlay = document.getElementById('overlay');
-      overlay.style.opacity = '0';
-      overlay.style.transition = 'opacity 0.4s';
-      setTimeout(() => overlay.style.display = 'none', 400);
-    }
-
+    /* ── Utilities ── */
     function goToPartner() {
       window.location.href = 'partner1.html';
     }
 
-    /* ── Loan Modal ── */
+    /* ── Loan Modal Redirection ── */
     function openLoanModal() {
-      document.getElementById('loanModal').classList.add('open');
-      document.getElementById('successBanner').style.display = 'none';
+      window.location.href = '../Frontend/become-a-partner.html';
     }
-
-    function closeLoanModal() {
-      document.getElementById('loanModal').classList.remove('open');
-    }
-
-    function selectLoanType(el) {
-      document.querySelectorAll('.loan-type-btn').forEach(b => b.classList.remove('selected'));
-      el.classList.add('selected');
-    }
-
-    function submitLoanApplication() {
-      document.getElementById('successBanner').style.display = 'block';
-      setTimeout(closeLoanModal, 2200);
-    }
-
-    /* Close modal on backdrop click */
-    document.getElementById('loanModal').addEventListener('click', function (e) {
-      if (e.target === this) closeLoanModal();
-    });
-
-    /* Enter key on login */
-    document.addEventListener('keydown', function (e) {
-      if (e.key === 'Enter') handleLogin();
-    });
   </script>
 </body>
 

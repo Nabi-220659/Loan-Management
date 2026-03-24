@@ -70,21 +70,72 @@ document.querySelectorAll('.btn-prev').forEach(btn => {
 // ── FINAL SUBMIT ──
 const submitBtn = document.getElementById('submitBtn');
 if (submitBtn) {
-  submitBtn.addEventListener('click', () => {
+  submitBtn.addEventListener('click', async () => {
     if (!validateStep(4)) return;
     submitBtn.classList.add('loading');
-    setTimeout(() => {
+
+    try {
+      // Gather form data manually
+      const formData = new FormData();
+      
+      const fields = [
+        'fullName', 'mobile', 'email', 'whatsapp', 'dob',
+        'address', 'city', 'state', 'pincode', 
+        'profession', 'experience', 'referrals', 'existingPartner',
+        'bankName', 'accountHolder', 'accountNo', 'ifsc'
+      ];
+
+      fields.forEach(f => {
+        const el = document.getElementById(f);
+        if (el) formData.append(f, el.value);
+      });
+
+      // Partner Type
+      const pType = document.querySelector('input[name="partnerType"]:checked');
+      if (pType) formData.append('partnerType', pType.value);
+
+      // Selected Products
+      const productLabels = document.querySelectorAll('.checkbox-grid input:checked');
+      const products = Array.from(productLabels).map(input => {
+        // Find text node inside the label, ignoring emojis/icons if possible 
+        return input.parentElement.textContent.replace(/[^\w\s-]/g, '').trim();
+      }).filter(p => p);
+      formData.append('products', JSON.stringify(products));
+
+      // File Uploads
+      const fileInputs = ['panFile', 'aadhaarFile', 'photoFile', 'bankFile'];
+      fileInputs.forEach(f => {
+        const input = document.getElementById(f);
+        if (input && input.files && input.files[0]) {
+          formData.append(f, input.files[0]);
+        }
+      });
+
+      // Send Request
+      const response = await fetch('../Backend/api/submit_partner.php', {
+        method: 'POST',
+        body: formData
+      });
+
+      const result = await response.json();
+
+      if (response.ok && result.success) {
+        submitBtn.classList.remove('loading');
+        formSection.style.display = 'none';
+        document.querySelector('.progress-bar-section').style.display = 'none';
+        successScreen.classList.add('show');
+
+        // Show the returned reference number
+        document.getElementById('refNumber').textContent = 'Reference: ' + result.reference_id;
+        successScreen.scrollIntoView({ behavior: 'smooth', block: 'start' });
+      } else {
+        throw new Error(result.message || 'Error submitting application.');
+      }
+    } catch (error) {
       submitBtn.classList.remove('loading');
-      formSection.style.display = 'none';
-      document.querySelector('.progress-bar-section').style.display = 'none';
-      successScreen.classList.add('show');
-
-      // Generate reference number
-      const ref = 'FBP-' + Date.now().toString().slice(-6).toUpperCase();
-      document.getElementById('refNumber').textContent = 'Reference: ' + ref;
-
-      successScreen.scrollIntoView({ behavior: 'smooth', block: 'start' });
-    }, 1400);
+      showToast(error.message, 'error');
+      console.error(error);
+    }
   });
 }
 

@@ -323,8 +323,39 @@ function showToast(msg, isError = false) {
 // ── SOCIAL LOGIN BUTTONS ──
 document.querySelectorAll('.btn-social').forEach(btn => {
   btn.addEventListener('click', () => {
-    showToast('Social login coming soon!');
+    const text = btn.textContent.toLowerCase();
+    if (text.includes('google')) {
+      window.location.href = '../Backend/api/oauth_google.php';
+    } else if (text.includes('facebook')) {
+      window.location.href = '../Backend/api/oauth_facebook.php';
+    } else {
+      showToast('Social login coming soon!');
+    }
   });
+});
+
+// ── OAUTH SUCCESS HANDLER ──
+document.addEventListener('DOMContentLoaded', () => {
+  const params = new URLSearchParams(window.location.search);
+  if (params.get('oauth_success') === 'true') {
+    sessionStorage.setItem('fundbee_logged_in', 'true');
+    const loginForm = document.getElementById('loginForm');
+    if (loginForm) loginForm.style.display = 'none';
+    
+    // Show success screen in login panel
+    document.querySelectorAll('.auth-panel').forEach(p => p.classList.remove('active'));
+    const loginPanel = document.getElementById('loginPanel');
+    if (loginPanel) loginPanel.classList.add('active');
+    
+    const successScreen = document.getElementById('loginSuccessScreen');
+    if (successScreen) successScreen.style.display = 'block';
+    
+    const provider = params.get('provider') || 'OAuth';
+    showToast('Successfully logged in with ' + provider.charAt(0).toUpperCase() + provider.slice(1));
+    
+    // Clean up URL
+    window.history.replaceState({}, document.title, window.location.pathname);
+  }
 });
 
 

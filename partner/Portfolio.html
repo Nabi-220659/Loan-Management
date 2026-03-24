@@ -176,26 +176,27 @@
             <div class="nav-section-label">Overview</div>
             <a class="nav-item" href="partner1.html"><span class="nav-item-icon">📊</span> Dashboard</a>
             <a class="nav-item" href="earnings.html"><span class="nav-item-icon">💰</span> My Earnings</a>
-            <a class="nav-item active-green" href="portfolio.html"><span class="nav-item-icon">📁</span> Portfolio</a>
-            <a class="nav-item" href="analytics.html"><span class="nav-item-icon">📈</span> Analytics</a>
+            <a class="nav-item active-green" href="Portfolio.html"><span class="nav-item-icon">📁</span> Portfolio</a>
+            <a class="nav-item" href="Analytics.html"><span class="nav-item-icon">📈</span> Analytics</a>
             <div class="nav-section-label" style="margin-top:10px">Management</div>
-            <a class="nav-item" href="borrowers.html"><span class="nav-item-icon">👥</span> My Borrowers</a>
-            <a class="nav-item" href="applications.html"><span class="nav-item-icon">📋</span> Applications</a>
-            <a class="nav-item" href="withdrawals.html"><span class="nav-item-icon">🏦</span> Withdrawals</a>
-            <a class="nav-item" href="statements.html"><span class="nav-item-icon">📄</span> Statements</a>
+            <a class="nav-item" href="Borrowers.html"><span class="nav-item-icon">👥</span> My Borrowers</a>
+            <a class="nav-item" href="Applications.html"><span class="nav-item-icon">📋</span> Applications</a>
+            <a class="nav-item" href="Withdrawls.html"><span class="nav-item-icon">🏦</span> Withdrawals</a>
+            <a class="nav-item" href="Statements.html"><span class="nav-item-icon">📄</span> Statements</a>
             <div class="nav-section-label" style="margin-top:10px">Premium</div>
-            <a class="nav-item" href="risk-insights.html"><span class="nav-item-icon">⚡</span> Risk Insights</a>
-            <a class="nav-item" href="deal-matcher.html"><span class="nav-item-icon">🎯</span> Deal Matcher</a>
-            <a class="nav-item" href="partner-settings.html"><span class="nav-item-icon">⚙️</span> Settings</a>
+            <a class="nav-item" href="Risk_insights.html"><span class="nav-item-icon">⚡</span> Risk Insights</a>
+            <a class="nav-item" href="Deal_matcher.html"><span class="nav-item-icon">🎯</span> Deal Matcher</a>
+            <a class="nav-item" href="partner_settings.html"><span class="nav-item-icon">⚙️</span> Settings</a>
         </nav>
         <div class="sidebar-footer">
-            <div class="logout-btn" onclick="window.location.href='login.html'">🚪 Sign Out</div>
+            <div class="logout-btn" onclick="window.location.href='../Frontend/login.html'">🚪 Sign Out</div>
         </div>
     </aside>
     <main class="main">
         <div class="topbar topbar-dark" style="border-bottom:1px solid rgba(255,255,255,0.08)">
             <div class="topbar-title topbar-title-dark">Portfolio</div>
             <div class="topbar-right">
+                <button class="switch-btn" onclick="goToUser()">← Switch to User View</button>
                 <a href="partner1.html" class="back-btn back-btn-dark">← Dashboard</a>
                 <div class="notif-btn nb-dark">🔔<div class="notif-dot-green"></div>
                 </div>
@@ -307,8 +308,8 @@
                 <div class="section-title-dark">Active Loan Book</div>
                 <div style="display:flex;gap:10px;align-items:center">
                     <div class="search-wrap"><span class="search-icon"
-                            style="color:rgba(255,255,255,0.3)">🔍</span><input class="search-input si-dark"
-                            placeholder="Search loans..." style="width:200px"></div>
+                            style="color:rgba(255,255,255,0.3)">🔍</span><input id="portfolioSearch" class="search-input si-dark"
+                            placeholder="Search loans..." style="width:200px" oninput="searchLoans(this.value)"></div>
                     <div class="filter-tabs">
                         <button class="filter-tab ft-dark active" onclick="filterStatus('all',this)">All</button>
                         <button class="filter-tab ft-dark" onclick="filterStatus('active',this)">Active</button>
@@ -409,12 +410,79 @@
     <script>
         function filterStatus(status, btn) {
             document.querySelectorAll('.ft-dark').forEach(b => b.classList.remove('active')); btn.classList.add('active');
-            document.querySelectorAll('.loan-row').forEach(r => { r.style.display = (status === 'all' || r.dataset.status === status) ? '' : 'none'; });
+            
+            const list = document.getElementById('portfolioTable');
+            list.classList.remove('slide-up');
+            void list.offsetWidth; // trigger reflow
+            list.classList.add('slide-up');
+            
+            document.querySelectorAll('.loan-row').forEach(r => { 
+                r.style.display = (status === 'all' || r.dataset.status === status) ? '' : 'none'; 
+            });
         }
         function filterSeg(seg) {
             document.querySelectorAll('.segment-card').forEach(c => c.classList.remove('active'));
             event.currentTarget.classList.add('active');
         }
+
+        function searchLoans(query) {
+            const q = query.trim().toLowerCase();
+            const table = document.getElementById('portfolioTable');
+            table.classList.remove('slide-up');
+            void table.offsetWidth;
+            table.classList.add('slide-up');
+
+            document.querySelectorAll('.loan-row').forEach(row => {
+                const cells = row.querySelectorAll('td');
+                const loanId = (cells[0]?.textContent || '').toLowerCase();
+                const borrower = (cells[1]?.textContent || '').toLowerCase();
+                const type = (cells[2]?.textContent || '').toLowerCase();
+                const matches = !q || loanId.includes(q) || borrower.includes(q) || type.includes(q);
+                row.style.display = matches ? '' : 'none';
+            });
+        }
+
+        function goToUser() {
+            window.location.href = '../user/user1.html';
+        }
+
+        document.addEventListener('DOMContentLoaded', () => {
+            // Fetch Hero KPIs
+            fetch('../Backend/partner/api_dashboard.php')
+                .then(r => r.json())
+                .then(res => {
+                    if (res.status === 'success' && res.data && res.data.kpis) {
+                        const k = res.data.kpis;
+                        const vals = document.querySelectorAll('.ph-val');
+                        if (vals.length >= 4) {
+                            vals[0].textContent = k.active_portfolio;
+                            vals[1].textContent = k.active_loans;
+                            vals[2].textContent = k.yield;
+                            vals[3].textContent = k.repayment_received;
+                        }
+                    }
+                })
+                .catch(err => console.error(err));
+
+            // Fetch Segments
+            fetch('../Backend/partner/api_portfolio.php')
+                .then(r => r.json())
+                .then(res => {
+                    if (res.status === 'success' && res.data && res.data.segments) {
+                        const segs = res.data.segments;
+                        const cards = document.querySelectorAll('.segment-card');
+                        segs.forEach((s, idx) => {
+                            if (cards[idx]) {
+                                cards[idx].querySelector('.seg-loans').textContent = s.count + ' loans';
+                                cards[idx].querySelector('.seg-amount').textContent = s.value;
+                                const pctSpan = cards[idx].querySelector('span:last-of-type');
+                                if (pctSpan) pctSpan.textContent = s.pct;
+                            }
+                        });
+                    }
+                })
+                .catch(err => console.error(err));
+        });
     </script>
 </body>
 
