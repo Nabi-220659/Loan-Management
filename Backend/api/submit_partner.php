@@ -5,6 +5,20 @@ use MongoDB\Client;
 
 header('Content-Type: application/json');
 
+// ── ELIGIBILITY CHECK ──
+function checkEligibility(array $data): array {
+    $ineligibleExperiences = ['Less than 1 year'];
+    $ineligibleReferrals   = ['1 – 5'];
+
+    if (in_array($data['experience'], $ineligibleExperiences)) {
+        return ['eligible' => false, 'reason' => 'Minimum 1 year of professional experience is required to become a partner.'];
+    }
+    if (in_array($data['referrals'], $ineligibleReferrals)) {
+        return ['eligible' => false, 'reason' => 'You must be able to refer at least 6 leads per month to qualify.'];
+    }
+    return ['eligible' => true, 'reason' => ''];
+}
+
 try {
     // Connect to MongoDB
     $client = new Client('mongodb://localhost:27017');
@@ -30,10 +44,13 @@ try {
         $data['products'] = [];
     }
 
+    // ── Run eligibility check ──
+    $eligibility = checkEligibility($data);
+
     // Generate unique reference ID
     $refId = 'FBP-' . strtoupper(substr(uniqid(), -6));
     $data['reference_id'] = $refId;
-    $data['status'] = 'Pending';
+    $data['status']       = $eligibility['eligible'] ? 'Approved' : 'Rejected';
     $data['submitted_at'] = date('Y-m-d H:i:s');
 
     // Handle File Uploads
@@ -47,19 +64,18 @@ try {
 
     foreach ($fileFields as $fileKey) {
         if (isset($_FILES[$fileKey]) && $_FILES[$fileKey]['error'] === UPLOAD_ERR_OK) {
-            $tmpName = $_FILES[$fileKey]['tmp_name'];
+            $tmpName  = $_FILES[$fileKey]['tmp_name'];
             $fileName = basename($_FILES[$fileKey]['name']);
-            // Make filename relatively unique
-            $uniqueName = 'partner_' . time() . '_' . rand(100, 999) . '_' . preg_replace("/[^a-zA-Z0-9.-]/", "_", $fileName);
+            $uniqueName  = 'partner_' . time() . '_' . rand(100, 999) . '_' . preg_replace("/[^a-zA-Z0-9.-]/", "_", $fileName);
             $destination = $uploadDir . $uniqueName;
 
             if (move_uploaded_file($tmpName, $destination)) {
                 $uploadedFiles[$fileKey] = 'Backend/uploads/partners/' . $uniqueName;
             } else {
-                $uploadedFiles[$fileKey] = null; // failed to move
+                $uploadedFiles[$fileKey] = null;
             }
         } else {
-            $uploadedFiles[$fileKey] = null; // not provided or error
+            $uploadedFiles[$fileKey] = null;
         }
     }
 
@@ -69,7 +85,15 @@ try {
     $result = $db->partner_applications->insertOne($data);
 
     if ($result->getInsertedCount() > 0) {
-        echo json_encode(['success' => true, 'reference_id' => $refId, 'message' => 'Application submitted successfully.']);
+        echo json_encode([
+            'success'      => true,
+            'eligible'     => $eligibility['eligible'],
+            'reason'       => $eligibility['reason'],
+            'reference_id' => $refId,
+            'message'      => $eligibility['eligible']
+                                ? 'Congratulations! Your application has been approved.'
+                                : 'Your application was received but you do not meet eligibility requirements at this time.'
+        ]);
     } else {
         http_response_code(500);
         echo json_encode(['success' => false, 'message' => 'Failed to save application to database.']);
